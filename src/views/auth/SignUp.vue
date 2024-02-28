@@ -31,9 +31,18 @@
   const role = ref('regular');
   
   const register = async () => {
-    await createUser(email.value, password.value, displayName.value, role.value);
+  try {
+    await store.dispatch('register', {
+      email: email.value,
+      password: password.value,
+      displayName: displayName.value,
+      role: role.value
+    });
     router.push('/signin');
-  };
+  } catch (error) {
+    console.error(error.message);
+  }
+};
   </script>
   
   <style scoped>
