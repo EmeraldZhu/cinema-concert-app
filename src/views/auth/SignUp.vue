@@ -6,10 +6,11 @@
         <input type="email" v-model="email" placeholder="Email" required />
         <input type="password" v-model="password" placeholder="Password" required />
         <select v-model="role" required>
-          <option value="regular" selected>Regular User</option>
+          <option value="regular">Regular User</option>
           <option value="admin">Admin</option>
         </select>
         <button type="submit">Sign Up</button>
+        <p v-if="error">{{ error }}</p>
       </form>
       <router-link to="/signin">Already have an account? Sign In</router-link>
     </div>
@@ -17,13 +18,12 @@
   
   <script setup>
   import { ref } from 'vue';
-  import { useAuth } from '@/composables/useAuth';
   import { useStore } from 'vuex';
   import { useRouter } from 'vue-router';
   
   const store = useStore();
   const router = useRouter();
-  const { createUser, error } = useAuth();
+  const error = ref(null); // If you want to handle errors locally
   
   const email = ref('');
   const password = ref('');
@@ -31,18 +31,18 @@
   const role = ref('regular');
   
   const register = async () => {
-  try {
-    await store.dispatch('register', {
-      email: email.value,
-      password: password.value,
-      displayName: displayName.value,
-      role: role.value
-    });
-    router.push('/signin');
-  } catch (error) {
-    console.error(error.message);
-  }
-};
+    try {
+      await store.dispatch('register', {
+        email: email.value,
+        password: password.value,
+        displayName: displayName.value,
+        role: role.value
+      });
+      router.push('/signin');
+    } catch (err) {
+      error.value = err.message; // Now the template can react to this error
+    }
+  };
   </script>
   
   <style scoped>
