@@ -23,7 +23,7 @@
   
   const store = useStore();
   const router = useRouter();
-  const { createUser } = useAuth();
+  const { createUser, error } = useAuth();
   
   const email = ref('');
   const password = ref('');
