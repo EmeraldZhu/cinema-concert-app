@@ -5,6 +5,7 @@
         <input type="email" v-model="email" placeholder="Email" required />
         <input type="password" v-model="password" placeholder="Password" required />
         <button type="submit">Login</button>
+        <p v-if="error">{{ error }}</p>
       </form>
       <router-link to="/signup">Don't have an account? Sign Up</router-link>
     </div>
@@ -14,22 +15,29 @@
   import { ref } from 'vue';
   import { useAuth } from '@/composables/useAuth';
   import { useRouter } from 'vue-router';
+  import { useStore } from 'vuex';
   
   const router = useRouter();
+  const store = useStore();
   const { signInUser, error } = useAuth();
   
   const email = ref('');
   const password = ref('');
   
   const signIn = async () => {
-    await signInUser(email.value, password.value);
-    // After sign-in, redirect based on the role
-    // This assumes you have a way to fetch the user role after signing in
-    const role = await fetchUserRole(); // Implement this function as needed
-    if (role === 'admin') {
-      router.push('/admin-dashboard');
-    } else {
-      router.push('/user-dashboard');
+    try {
+      await signInUser(email.value, password.value);
+      // The user's role is fetched and stored in Vuex during the signInUser process
+      // Now you can access the user's role from the Vuex store
+      const role = store.state.user.role; // Assuming the role is stored in the user object
+      if (role === 'admin') {
+        router.push('/admin-dashboard');
+      } else {
+        router.push('/user-dashboard');
+      }
+    } catch (err) {
+      // Handle error, for example, show an error message to the user
+      console.error(err);
     }
   };
   </script>
@@ -62,6 +70,9 @@
   }
   button:hover {
     background: #666;
+  }
+  p {
+    color: red;
   }
   </style>
   
