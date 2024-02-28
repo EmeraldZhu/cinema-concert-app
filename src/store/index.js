@@ -65,13 +65,19 @@ const store = createStore({
         }
       },
 
-      async login({ commit }, { email, password }) {
+      async login({ dispatch, commit }, { email, password }) {
         try {
           // Log the user in with Firebase
           const userCredential = await signInWithEmailAndPassword(auth, email, password);
   
-          // Commit the user data to the state
-          commit('setUser', userCredential.user);
+          // Fetch the user's role from Firestore and commit the user data to the state
+          const role = await dispatch('fetchUserRole', userCredential.user.uid);
+          commit('setUser', {
+            uid: userCredential.user.uid,
+            email: userCredential.user.email,
+            displayName: userCredential.user.displayName,
+            role: role // Include role in the user object for easy access
+          });
         } catch (error) {
           throw new Error('Failed to sign in: ' + error.message);
         }
