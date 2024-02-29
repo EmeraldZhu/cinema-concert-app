@@ -1,14 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import store from '@/store'; // Import Vuex store
+import store from '@/store';
 
-// Import your components. Ensure these paths match your project structure.
+// Import components
 import Home from '../views/Home.vue';
 import About from '../views/About.vue';
 import AdminDashboard from '../views/admin/AdminDashboard.vue';
 import UserDashboard from '../views/user/UserDashboard.vue';
 import SignIn from '../views/auth/SignIn.vue';
 import SignUp from '../views/auth/SignUp.vue';
-// Import any other components you need for your routes
+// Import any other components needed
 
 // Define routes
 const routes = [
