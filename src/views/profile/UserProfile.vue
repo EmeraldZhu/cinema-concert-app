@@ -10,55 +10,64 @@
           <label for="email">Email:</label>
           <input id="email" type="email" v-model="email" disabled />
         </div>
-        <!-- Add more fields as needed -->
+        <!-- Displaying the user's role (Read-only) -->
+        <div>
+          <label for="role">Role:</label>
+          <input id="role" type="text" v-model="role" disabled />
+        </div>
         <button type="submit">Update Profile</button>
       </form>
     </div>
-</template>
+  </template>
   
-<script setup>
-import { ref, onMounted } from 'vue';
-import { useStore } from 'vuex';
-
-const store = useStore();
-const displayName = ref('');
-const email = ref('');
-
-// Assuming the user object in the store contains email and displayName
-onMounted(() => {
+  <script setup>
+  import { ref, onMounted } from 'vue';
+  import { useStore } from 'vuex';
+  
+  const store = useStore();
+  const displayName = ref('');
+  const email = ref('');
+  const role = ref(''); // Added role ref
+  
+  // Populate fields with user data on component mount
+  onMounted(() => {
     const user = store.state.user;
     if (user) {
       displayName.value = user.displayName || '';
       email.value = user.email || '';
+      role.value = user.role || ''; // Populate role
     }
-});
+  });
   
-const updateProfile = () => {
-    // Dispatch an action to update the user's profile
-    store.dispatch('updateUserProfile', { displayName: displayName.value });
-    // Implement the updateUserProfile action in your Vuex store
-};
-</script>
+  const updateProfile = async () => {
+    try {
+      // Dispatch an action to update the user's profile
+      await store.dispatch('updateUserProfile', { displayName: displayName.value });
+      alert('Profile updated successfully.'); // Provide feedback on successful update
+    } catch (error) {
+      console.error('Failed to update profile:', error);
+      alert('Failed to update profile.'); // Provide feedback on failure
+    }
+  };
+  </script>
   
-<style>
-.profile-container {
+  <style>
+  /* No changes in style */
+  .profile-container {
     max-width: 600px;
     margin: auto;
     padding: 20px;
-}
-
-label {
+  }
+  label {
     display: block;
-}
-
-input {
+  }
+  input {
     width: 100%;
     padding: 8px;
     margin: 10px 0;
-}
-
-button {
+  }
+  button {
     cursor: pointer;
-}
-</style>
+  }
+  </style>
   
