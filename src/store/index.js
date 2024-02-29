@@ -6,9 +6,10 @@ import {
   signOut,
   updateProfile,
   getAuth,
-  onAuthStateChanged
+  onAuthStateChanged,
+  deleteUser
 } from 'firebase/auth';
-import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 
 const store = createStore({
     state() {
@@ -102,6 +103,24 @@ const store = createStore({
         } catch (error) {
           console.error('Failed to update profile:', error);
           throw error;
+        }
+      },
+
+      async deleteUserAccount({ state, commit }) {
+        try {
+          const { uid } = state.user;
+    
+          // Delete user document from Firestore
+          await deleteDoc(doc(db, 'users', uid));
+    
+          // Delete the user from Firebase Authentication
+          await deleteUser(auth.currentUser);
+    
+          // Clear user state after account deletion
+          commit('setUser', null);
+        } catch (error) {
+          console.error('Failed to delete user account:', error);
+          throw error; // Propagate the error for handling in the component
         }
       },
   
