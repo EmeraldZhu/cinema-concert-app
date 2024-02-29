@@ -25,80 +25,65 @@ const store = createStore({
       }
     },
     actions: {
-      async register({ commit }, { email, password, displayName, role }) {
+      async register({ commit, dispatch }, { email, password, displayName, role }) {
         try {
-          // Register the user with Firebase
           const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-          
-          // Set the displayName for the user (this is a Firebase feature)
-          await updateProfile(userCredential.user, {
-            displayName: displayName
-          });
+          await updateProfile(userCredential.user, { displayName });
   
           // Save the role to Firestore
           await setDoc(doc(db, 'users', userCredential.user.uid), {
-              uid: userCredential.user.uid,
-              displayName,
-              email,
-              role
-          });
-
-          // Prepare user object for Vuex state
-          const user = {
             uid: userCredential.user.uid,
-            email,
             displayName,
-            role // Include role for easy access
-          };
-
-          // Commit the user data to the state
-          commit('setUser', user);
-        } catch (error) {
-          throw new Error('Failed to register: ' + error.message);
-        }
-      },
-
-      async fetchUserRole({ commit }, uid) {
-        // Retrieve the user's role from Firestore
-        const userDoc = await getDoc(doc(db, 'users', uid));
-        if (userDoc.exists()) {
-          const userData = userDoc.data();
-          commit('setUser', {
-            ...auth.currentUser,
-            ...userData // This should include the role
+            email,
+            role
           });
-          return userData.role;
-        } else {
-          throw new Error('User role document does not exist.');
+  
+          // Immediately fetch the user role to include in the user state
+          await dispatch('fetchUserRole', userCredential.user.uid);
+  
+        } catch (error) {
+          console.error('Failed to register:', error);
+          throw error; // It's better to rethrow the error to handle it in the component
         }
       },
-
+  
+      async fetchUserRole({ commit }, uid) {
+        try {
+          const docRef = doc(db, 'users', uid);
+          const docSnap = await getDoc(docRef);
+  
+          if (docSnap.exists()) {
+            const userData = docSnap.data();
+            commit('setUser', { uid, ...userData });
+          } else {
+            console.log("No such document!");
+            commit('setUser', null); // Consider how you want to handle this case.
+          }
+        } catch (error) {
+          console.error('Error fetching user role:', error);
+          throw error;
+        }
+      },
+  
       async login({ dispatch, commit }, { email, password }) {
         try {
-          // Log the user in with Firebase
           const userCredential = await signInWithEmailAndPassword(auth, email, password);
+          // The role will be fetched and committed to the state within fetchUserRole
+          await dispatch('fetchUserRole', userCredential.user.uid);
   
-          // Fetch the user's role from Firestore and commit the user data to the state
-          const role = await dispatch('fetchUserRole', userCredential.user.uid);
-          commit('setUser', {
-            uid: userCredential.user.uid,
-            email: userCredential.user.email,
-            displayName: userCredential.user.displayName,
-            role: role // Include role in the user object for easy access
-          });
         } catch (error) {
-          throw new Error('Failed to sign in: ' + error.message);
+          console.error('Failed to sign in:', error);
+          throw error;
         }
       },
+  
       async logout({ commit }) {
         try {
-          // Log the user out with Firebase
           await signOut(auth);
-  
-          // Remove the user data from the state
           commit('setUser', null);
         } catch (error) {
-          throw new Error('Failed to log out: ' + error.message);
+          console.error('Failed to log out:', error);
+          throw error;
         }
       }
     }

@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import store from '@/store';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
-// Import components
+// Import your components directly
 import Home from '../views/Home.vue';
 import About from '../views/About.vue';
 import AdminDashboard from '../views/admin/AdminDashboard.vue';
@@ -9,18 +10,14 @@ import UserDashboard from '../views/user/UserDashboard.vue';
 import SignIn from '../views/auth/SignIn.vue';
 import SignUp from '../views/auth/SignUp.vue';
 import UserProfile from '../views/profile/UserProfile.vue';
-// Import any other components needed
 
-// Define routes
 const routes = [
   {
     path: '/',
     name: 'Home',
     component: Home,
     beforeEnter: (to, from, next) => {
-      // If the user is already logged in, redirect to a dashboard
       if (store.state.user) {
-        // Check user role for appropriate dashboard
         const role = store.state.user.role;
         if (role === 'admin') {
           next({ name: 'AdminDashboard' });
@@ -28,26 +25,22 @@ const routes = [
           next({ name: 'UserDashboard' });
         }
       } else {
-        next(); // Proceed to Home if not logged in
+        next();
       }
     }
   },
-  {
-    path: '/about',
-    name: 'About',
-    component: About
-  },
+  { path: '/about', name: 'About', component: About },
   {
     path: '/admin-dashboard',
     name: 'AdminDashboard',
     component: AdminDashboard,
-    meta: { requiresAuth: true, requiresAdmin: true }
+    meta: { requiresAuth: true, requiresAdmin: true },
   },
   {
     path: '/user-dashboard',
     name: 'UserDashboard',
     component: UserDashboard,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true },
   },
   {
     path: '/signin',
@@ -55,47 +48,61 @@ const routes = [
     component: SignIn,
     beforeEnter: (to, from, next) => {
       if (store.state.user) {
-        next({ name: 'Home' }); // Redirect logged-in users to Home
+        next({ name: 'Home' });
       } else {
-        next(); // Allow navigation to SignIn if not logged in
+        next();
       }
     }
   },
-  {
-    path: '/signup',
-    name: 'SignUp',
-    component: SignUp
-  },
+  { path: '/signup', name: 'SignUp', component: SignUp },
   {
     path: '/profile',
     name: 'UserProfile',
     component: UserProfile,
-    meta: { requiresAuth: true }
-  }
-  // Define additional routes as needed
+    meta: { requiresAuth: true },
+  },
+  // Add other routes as needed
 ];
 
-// Create router instance
 const router = createRouter({
   history: createWebHistory(),
   routes,
 });
 
-// Navigation guards for handling authentication and role-based access
-router.beforeEach((to, from, next) => {
-  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
-  const requiresAdmin = to.matched.some(record => record.meta.requiresAdmin);
-  const currentUser = store.state.user;
+let isAuthReady = false;
 
-  if (requiresAuth && !currentUser) {
-    // User not logged in, redirect to sign-in page
-    next({ name: 'SignIn' });
-  } else if (requiresAuth && requiresAdmin && (!currentUser || currentUser.role !== 'admin')) {
-    // User is not an admin, redirect to home page or a "not authorized" page
-    next({ name: 'Home' });
+getAuth().onAuthStateChanged(async (user) => {
+  if (!isAuthReady) {
+    isAuthReady = true;
+    if (user) {
+      // Assuming 'fetchAndSetUserRole' is an action in your Vuex store
+      await store.dispatch('fetchAndSetUserRole', { uid: user.uid });
+    } else {
+      store.commit('setUser', null);
+    }
+    router.push(router.currentRoute.value.fullPath);
+  }
+});
+
+router.beforeEach((to, from, next) => {
+  if (!isAuthReady) {
+    // Delay navigation until auth state is confirmed
+    const unsubscribe = getAuth().onAuthStateChanged((user) => {
+      unsubscribe();
+      next();
+    });
   } else {
-    // Proceed to the route
-    next();
+    const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+    const requiresAdmin = to.matched.some(record => record.meta.requiresAdmin);
+    const currentUser = store.state.user;
+
+    if (requiresAuth && !currentUser) {
+      next({ name: 'SignIn' });
+    } else if (requiresAuth && requiresAdmin && (!currentUser || currentUser.role !== 'admin')) {
+      next({ name: 'Home' }); // Redirect to a more appropriate route if needed
+    } else {
+      next();
+    }
   }
 });
 
