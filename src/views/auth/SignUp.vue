@@ -40,8 +40,13 @@
       });
       router.push('/signin');
     } catch (err) {
-      error.value = err.message; // Now the template can react to this error
-    }
+      console.log(err);
+      if (err.code === 'auth/email-already-in-use') {
+        error.value = "This email is already in use. Please sign in.";
+      } else {
+        error.value = err.message;
+      }
+}
   };
   </script>
   
