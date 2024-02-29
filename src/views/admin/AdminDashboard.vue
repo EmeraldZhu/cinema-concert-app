@@ -2,6 +2,8 @@
 <div>
     <h1>Hello, Admin</h1>
 
+    <AddEventForm />
+
     <button @click="logout">Logout</button>
 </div>
 </template>
@@ -9,6 +11,7 @@
 <script setup>
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
+import AddEventForm from '@/components/admin/AddEventForm.vue';
 
 const store = useStore();
 const router = useRouter();
