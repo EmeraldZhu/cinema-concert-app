@@ -6,6 +6,7 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import Home from '../views/Home.vue';
 import About from '../views/About.vue';
 import AdminDashboard from '../views/admin/AdminDashboard.vue';
+import AdminEventList from '../views/admin/AdminEventList.vue';
 import UserDashboard from '../views/user/UserDashboard.vue';
 import SignIn from '../views/auth/SignIn.vue';
 import SignUp from '../views/auth/SignUp.vue';
@@ -34,6 +35,12 @@ const routes = [
     path: '/admin-dashboard',
     name: 'AdminDashboard',
     component: AdminDashboard,
+    meta: { requiresAuth: true, requiresAdmin: true },
+  },
+  {
+    path: '/admin-event-list',
+    name: 'AdminEventList',
+    component: AdminEventList,
     meta: { requiresAuth: true, requiresAdmin: true },
   },
   {
@@ -75,7 +82,6 @@ getAuth().onAuthStateChanged(async (user) => {
   if (!isAuthReady) {
     isAuthReady = true;
     if (user) {
-      // Assuming 'fetchAndSetUserRole' is an action in your Vuex store
       await store.dispatch('fetchUserRole', { uid: user.uid });
     } else {
       store.commit('setUser', null);
