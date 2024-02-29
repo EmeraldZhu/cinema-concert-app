@@ -4,6 +4,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
+  updateProfile
 } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 
@@ -30,21 +31,28 @@ const store = createStore({
           const userCredential = await createUserWithEmailAndPassword(auth, email, password);
           
           // Set the displayName for the user (this is a Firebase feature)
-          await userCredential.user.updateProfile({ displayName });
+          await updateProfile(userCredential.user, {
+            displayName: displayName
+          });
   
           // Save the role to Firestore
-            await setDoc(doc(db, 'users', userCredential.user.uid), {
-                uid: userCredential.user.uid,
-                displayName,
-                email,
-                role
+          await setDoc(doc(db, 'users', userCredential.user.uid), {
+              uid: userCredential.user.uid,
+              displayName,
+              email,
+              role
           });
-  
+
+          // Prepare user object for Vuex state
+          const user = {
+            uid: userCredential.user.uid,
+            email,
+            displayName,
+            role // Include role for easy access
+          };
+
           // Commit the user data to the state
-        commit('setUser', {
-            ...userCredential.user,
-            role // Include role in the user object for easy access
-          });
+          commit('setUser', user);
         } catch (error) {
           throw new Error('Failed to register: ' + error.message);
         }
