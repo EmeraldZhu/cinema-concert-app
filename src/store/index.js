@@ -64,6 +64,16 @@ const store = createStore({
           throw error;
         }
       },
+
+      setUserFromAuth({ commit }, user) {
+        const userData = {
+          uid: user.uid,
+          email: user.email,
+          // Include additional user properties as needed
+        };
+        // Optionally fetch additional user details like role from Firestore here
+        commit('setUser', userData);
+      },
   
       async login({ dispatch, commit }, { email, password }) {
         try {
