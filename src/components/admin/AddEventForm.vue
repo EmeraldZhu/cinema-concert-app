@@ -83,20 +83,48 @@ export default {
 
 <style>
 /* Basic styling; adjust as needed */
+.event-form {
+  max-width: 500px;
+  margin: auto;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+}
+
 .search-container input, .form-group input, .form-group textarea {
   width: 100%;
   padding: 8px;
   margin-bottom: 10px;
 }
+
 .search-container ul {
   list-style: none;
   padding: 0;
 }
+
 .search-container li {
   cursor: pointer;
   margin: 5px 0;
 }
+
 .search-container li:hover {
   background-color: #f0f0f0;
+}
+
+button {
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
 }
 </style>
