@@ -65,7 +65,11 @@ export default {
       }
     },
     selectMovie(movie) {
-      // Method remains the same
+      this.event.title = movie.title;
+      this.event.description = movie.overview;
+      // Assuming you have a data property for the poster path
+      this.event.posterPath = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
+      this.searchResults = [];
     },
     async submitForm() {
       try {
