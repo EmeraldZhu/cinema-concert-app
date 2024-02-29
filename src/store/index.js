@@ -11,6 +11,8 @@ import {
 } from 'firebase/auth';
 import { doc, setDoc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 
+import { events } from './modules/events';
+
 const store = createStore({
     state() {
       return {
@@ -145,6 +147,11 @@ const store = createStore({
           throw error;
         }
       }
+    },
+
+    modules: {
+      // register events module here
+      events
     }
   });
   
