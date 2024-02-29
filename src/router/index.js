@@ -76,7 +76,7 @@ getAuth().onAuthStateChanged(async (user) => {
     isAuthReady = true;
     if (user) {
       // Assuming 'fetchAndSetUserRole' is an action in your Vuex store
-      await store.dispatch('fetchAndSetUserRole', { uid: user.uid });
+      await store.dispatch('fetchUserRole', { uid: user.uid });
     } else {
       store.commit('setUser', null);
     }
