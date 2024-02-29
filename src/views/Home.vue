@@ -22,6 +22,9 @@
 </template>
 
 <script setup>
+import theGreatestShowmanImage from '@/assets/the-greatest-showman.webp'
+import outdoorConcert from '@/assets/outdoor-concert.jpg'
+
 import { computed } from 'vue';
 import { useStore } from 'vuex';
 
@@ -31,8 +34,16 @@ const user = computed(() => store.state.user);
 // Placeholder data for events
 const events = computed(() => [
   // Example event data
-  { id: 1, title: 'The Greatest Showman', date: '2024-03-15', image: '@/assets/the-greatest-showman.webp' },
-  { id: 2, title: 'Live Concert: John Doe', date: '2024-04-20', image: '' },
+  { id: 1,
+    title: 'The Greatest Showman',
+    date: '2024-03-15',
+    image: theGreatestShowmanImage 
+  },
+  { id: 2,
+    title: 'Live Concert: John Doe',
+    date: '2024-04-20',
+    image: outdoorConcert
+  },
   // Add more events as needed
 ]);
 </script>
