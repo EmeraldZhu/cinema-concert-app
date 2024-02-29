@@ -4,7 +4,9 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
-  updateProfile
+  updateProfile,
+  getAuth,
+  onAuthStateChanged
 } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 
@@ -65,14 +67,24 @@ const store = createStore({
         }
       },
 
-      setUserFromAuth({ commit }, user) {
-        const userData = {
-          uid: user.uid,
-          email: user.email,
-          // Include additional user properties as needed
-        };
-        // Optionally fetch additional user details like role from Firestore here
-        commit('setUser', userData);
+      async setUserFromAuth({ commit }, user) {
+        // Fetch additional user details, such as role, from Firestore
+        const userDocRef = doc(db, 'users', user.uid);
+        const userDocSnap = await getDoc(userDocRef);
+    
+        if (userDocSnap.exists()) {
+          const userData = userDocSnap.data();
+          // Assuming userData contains 'role'
+          commit('setUser', {
+            uid: user.uid,
+            email: user.email,
+            displayName: user.displayName, // assuming this is also needed
+            role: userData.role, // Store the role in Vuex
+          });
+        } else {
+          console.error("No user document found!");
+          // Handle the case where the user document does not exist
+        }
       },
   
       async login({ dispatch, commit }, { email, password }) {
