@@ -8,7 +8,7 @@ import {
   getAuth,
   onAuthStateChanged
 } from 'firebase/auth';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
 
 const store = createStore({
     state() {
@@ -84,6 +84,24 @@ const store = createStore({
         } else {
           console.error("No user document found!");
           // Handle the case where the user document does not exist
+        }
+      },
+
+      async updateUserProfile({ state, commit }, { displayName }) {
+        if (!state.user) return; // Ensure there's a user to update
+        try {
+          const { uid } = state.user;
+          // Update displayName in Firebase Auth
+          await updateProfile(auth.currentUser, { displayName });
+          // Optionally update displayName in Firestore
+          const userRef = doc(db, 'users', uid);
+          await updateDoc(userRef, { displayName });
+  
+          // Update Vuex state
+          commit('setUser', { ...state.user, displayName });
+        } catch (error) {
+          console.error('Failed to update profile:', error);
+          throw error;
         }
       },
   
