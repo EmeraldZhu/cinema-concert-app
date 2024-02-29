@@ -18,9 +18,14 @@
           <label for="description">Description</label>
           <textarea id="description" v-model="event.description" required></textarea>
         </div>
+        <!-- Ticket Prices for VIP and Regular -->
         <div class="form-group">
-          <label for="ticketPrice">Ticket Price</label>
-          <input id="ticketPrice" v-model="event.ticketPrice" type="number" required>
+          <label for="vipTicketPrice">VIP Ticket Price</label>
+          <input id="vipTicketPrice" v-model="event.vipTicketPrice" type="number" required>
+        </div>
+        <div class="form-group">
+          <label for="regularTicketPrice">Regular Ticket Price</label>
+          <input id="regularTicketPrice" v-model="event.regularTicketPrice" type="number" required>
         </div>
         <div class="form-group">
           <label for="maxAttendees">Maximum Attendees</label>
@@ -44,7 +49,8 @@ export default {
       event: {
         title: '',
         description: '',
-        ticketPrice: 0,
+        vipTicketPrice: 0,
+        regularTicketPrice: 0,
         maxAttendees: 0,
         posterPath: ''
       }
@@ -75,7 +81,7 @@ export default {
       try {
         await this.addEvent(this.event); // Use addEvent action to submit event data to Firestore
         alert('Event added successfully.');
-        this.event = { title: '', description: '', ticketPrice: 0, maxAttendees: 0, posterPath: '' };
+        this.event = { title: '', description: '', vipTicketPrice: 0, regularTicketPrice: 0, maxAttendees: 0, posterPath: '' };
       } catch (error) {
         alert('Failed to add event. Please try again.');
         console.error('Error adding event:', error);
