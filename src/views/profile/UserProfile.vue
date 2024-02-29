@@ -16,6 +16,7 @@
           <input id="role" type="text" v-model="role" disabled />
         </div>
         <button type="submit">Update Profile</button>
+        <button @click="deleteAccount" class="delete-account-btn">Delete Account</button>
       </form>
     </div>
   </template>
@@ -23,8 +24,11 @@
   <script setup>
   import { ref, onMounted } from 'vue';
   import { useStore } from 'vuex';
+  import { useRouter } from 'vue-router';
   
   const store = useStore();
+  const router = useRouter();
+
   const displayName = ref('');
   const email = ref('');
   const role = ref(''); // Added role ref
@@ -49,25 +53,53 @@
       alert('Failed to update profile.'); // Provide feedback on failure
     }
   };
+
+  const deleteAccount = async () => {
+  const confirmDelete = confirm('Are you sure you want to delete your account? This cannot be undone.');
+  if (confirmDelete) {
+    try {
+      await store.dispatch('deleteUserAccount');
+      alert('Account deleted successfully.');
+      router.push('/'); // Redirect to home page or sign-in page after account deletion
+    } catch (error) {
+      alert('Failed to delete account. Please try again.');
+    }
+  }
+};
   </script>
   
-  <style>
-  /* No changes in style */
-  .profile-container {
+<style>
+.profile-container {
     max-width: 600px;
     margin: auto;
     padding: 20px;
-  }
-  label {
+}
+
+label {
     display: block;
-  }
-  input {
+}
+
+input {
     width: 100%;
     padding: 8px;
     margin: 10px 0;
-  }
-  button {
+}
+
+button {
     cursor: pointer;
-  }
-  </style>
+}
+
+.delete-account-btn {
+  background-color: #ff4d4f;
+  color: white;
+  border: none;
+  padding: 10px;
+  margin-top: 20px;
+  cursor: pointer;
+}
+
+.delete-account-btn:hover {
+  background-color: #ff7875;
+}
+</style>
   
