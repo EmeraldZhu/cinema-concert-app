@@ -31,7 +31,7 @@ const user = computed(() => store.state.user);
 // Placeholder data for events
 const events = computed(() => [
   // Example event data
-  { id: 1, title: 'The Greatest Showman', date: '2024-03-15', image: '' },
+  { id: 1, title: 'The Greatest Showman', date: '2024-03-15', image: '@/assets/the-greatest-showman.webp' },
   { id: 2, title: 'Live Concert: John Doe', date: '2024-04-20', image: '' },
   // Add more events as needed
 ]);
