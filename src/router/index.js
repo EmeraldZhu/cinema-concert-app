@@ -15,7 +15,21 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: Home
+    component: Home,
+    beforeEnter: (to, from, next) => {
+      // If the user is already logged in, redirect to a dashboard
+      if (store.state.user) {
+        // Check user role for appropriate dashboard
+        const role = store.state.user.role;
+        if (role === 'admin') {
+          next({ name: 'AdminDashboard' });
+        } else {
+          next({ name: 'UserDashboard' });
+        }
+      } else {
+        next(); // Proceed to Home if not logged in
+      }
+    }
   },
   {
     path: '/about',
@@ -37,7 +51,14 @@ const routes = [
   {
     path: '/signin',
     name: 'SignIn',
-    component: SignIn
+    component: SignIn,
+    beforeEnter: (to, from, next) => {
+      if (store.state.user) {
+        next({ name: 'Home' }); // Redirect logged-in users to Home
+      } else {
+        next(); // Allow navigation to SignIn if not logged in
+      }
+    }
   },
   {
     path: '/signup',
