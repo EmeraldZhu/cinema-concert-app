@@ -20,9 +20,9 @@
         <i class="fas fa-ticket-alt"></i>
         <span v-if="isActive('AdminEventList')">•</span>
       </div>
-      <div class="footer-icon" @click="navigateTo('UserProfile')">
-        <i class="fas fa-user"></i> <!-- Assuming 'fas fa-user' is the icon for profile -->
-        <span v-if="isActive('UserProfile')">•</span>
+      <div class="footer-icon" @click="navigateTo('AdminProfile')">
+        <i class="fas fa-user"></i>
+        <span v-if="isActive('AdminProfile')">•</span>
       </div>
     </footer>
 </div>

@@ -11,6 +11,7 @@ import UserDashboard from '../views/user/UserDashboard.vue';
 import SignIn from '../views/auth/SignIn.vue';
 import SignUp from '../views/auth/SignUp.vue';
 import UserProfile from '../views/profile/UserProfile.vue';
+import AdminProfile from '../views/profile/AdminProfile.vue';
 
 const routes = [
   {
@@ -63,10 +64,16 @@ const routes = [
   },
   { path: '/signup', name: 'SignUp', component: SignUp },
   {
-    path: '/profile',
+    path: '/user-profile',
     name: 'UserProfile',
     component: UserProfile,
     meta: { requiresAuth: true },
+  },
+  {
+    path: '/admin-profile',
+    name: 'AdminProfile',
+    component: AdminProfile,
+    meta: { requiresAuth: true, requiresAdmin: true },
   },
   // Add other routes as needed
 ];
