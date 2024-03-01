@@ -68,6 +68,10 @@ const isActive = (name) => {
 <style scoped>
 /* Include FontAwesome */
 @import 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css';
+
+h2 {
+  color: #121212;
+}
 .homepage-container {
   padding: 1em;
   background-color: #121212; /* Dark background */
