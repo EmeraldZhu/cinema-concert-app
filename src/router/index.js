@@ -8,6 +8,7 @@ import About from '../views/About.vue';
 import AdminDashboard from '../views/admin/AdminDashboard.vue';
 import AdminEventList from '../views/admin/AdminEventList.vue';
 import UserDashboard from '../views/user/UserDashboard.vue';
+import UserEventList from '../views/user/UserEventList.vue';
 import SignIn from '../views/auth/SignIn.vue';
 import SignUp from '../views/auth/SignUp.vue';
 import UserProfile from '../views/profile/UserProfile.vue';
@@ -48,6 +49,12 @@ const routes = [
     path: '/user-dashboard',
     name: 'UserDashboard',
     component: UserDashboard,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/user-event-list',
+    name: 'UserEventList',
+    component: UserEventList,
     meta: { requiresAuth: true },
   },
   {
