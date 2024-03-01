@@ -11,8 +11,10 @@
         <p>Price: KES {{ event.regularTicketPrice }}</p>
         <p>Max Attendees: {{ event.maxAttendees }}</p>
       </div>
-      <button class="edit-button" @click="editEvent">Edit Event</button>
-      <button class="remove-button" @click="removeEvent">Remove</button>
+      <!-- Emit 'edit-event' instead of 'edit' -->
+      <button class="edit-button" @click="emitEditEvent">Edit Event</button>
+      <!-- Emit 'remove-event' instead of 'remove' -->
+      <button class="remove-button" @click="emitRemoveEvent">Remove</button>
     </div>
   </div>
 </template>
@@ -23,20 +25,26 @@ export default {
     event: Object,
     show: Boolean
   },
-  emits: ['close', 'edit', 'remove'],
+  // Emit 'edit-event' and 'remove-event' for clarity and consistency
+  emits: ['close', 'edit-event', 'remove-event'],
   methods: {
     closeModal() {
       this.$emit('close');
     },
-    editEvent() {
-      this.$emit('edit', this.event);
+    // Rename method to emitEditEvent for clarity
+    emitEditEvent() {
+      // Emit 'edit-event' with the event data
+      this.$emit('edit-event', this.event);
     },
-    removeEvent() {
-      this.$emit('remove', this.event.id);
+    // Rename method to emitRemoveEvent for clarity
+    emitRemoveEvent() {
+      // Emit 'remove-event' with the event ID
+      this.$emit('remove-event', this.event.id);
     }
   }
 };
 </script>
+
 
 <style scoped>
 .modal {

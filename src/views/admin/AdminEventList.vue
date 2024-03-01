@@ -18,10 +18,19 @@
     <EventDetailsModal
       v-if="selectedEvent"
       :event="selectedEvent"
-      :show="showModal"
-      @close="showModal = false"
-      @edit="editEvent"
-      @remove="removeEvent"
+      :show="showDetailsModal"
+      @close="showDetailsModal = false"
+      @edit-event="handleEditEvent"
+      @remove-event="handleRemoveEvent"
+    />
+
+    <!-- EditEventForm integration -->
+    <EditEventForm
+      v-if="showEditModal"
+      :show="showEditModal"
+      :eventData="selectedEventForEdit"
+      @close="showEditModal = false"
+      @update="onEventUpdated"
     />
 
     <footer>
@@ -39,6 +48,7 @@
 
 <script>
 import EventDetailsModal from '@/components/admin/EventDetailsModal.vue';
+import EditEventForm from '@/components/admin/EditEventForm.vue';
 
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -49,12 +59,15 @@ import '@fortawesome/fontawesome-free/css/all.css';
 
 export default {
   components: {
-    EventDetailsModal
+    EventDetailsModal,
+    EditEventForm
   },
   setup() {
     const events = ref([]);
     const selectedEvent = ref(null);
-    const showModal = ref(false);
+    const showDetailsModal = ref(false);
+    const showEditModal = ref(false);
+    const selectedEventForEdit = ref(null);
     const route = useRoute();
     const router = useRouter();
 
@@ -69,15 +82,16 @@ export default {
     const selectEvent = (event) => {
       // Logic to show EventDetailsModal
       selectedEvent.value = event;
-      showModal.value = true;
+      showDetailsModal.value = true;
     };
 
-    const editEvent = (event) => {
-      // Logic to handle event editing goes here
-      // This will typically involve setting a state to show the EditEventForm modal
+    const handleEditEvent = (event) => {
+      selectedEventForEdit.value = event; // set the event to be edited
+      showEditModal.value = true; // show the edit event form modal
+      showDetailsModal.value = false; // Close the details modal when opening edit modal
     };
 
-    const removeEvent = async (eventId) => {
+    const handleRemoveEvent = async (eventId) => {
       // Confirm before deleting
       if (confirm(`Are you sure you want to delete the event: ${eventId}?`)) {
         try {
@@ -88,12 +102,26 @@ export default {
             id: doc.id,
             ...doc.data()
           }));
-          showModal.value = false;
+          showDetailsModal.value = false; // close details modal
         } catch (error) {
           console.error("Error removing event: ", error);
           alert("Failed to delete the event. Please try again.");
         }
       }
+    };
+
+    const onEventUpdated = async () => {
+      showEditModal.value = false; // Close the edit modal after update
+      
+      // Fetch the updated list of events from Firestore
+      const querySnapshot = await getDocs(collection(db, 'events'));
+      events.value = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+
+      // Optionally, close the details modal if it is still open
+      showDetailsModal.value = false;
     };
 
     const navigateTo = (name) => {
@@ -104,7 +132,7 @@ export default {
       return route.name === name;
     };
 
-    return { events,  selectedEvent, showModal, selectEvent, removeEvent, navigateTo, isActive };
+    return { events,  selectedEvent, showDetailsModal, showEditModal, selectedEventForEdit, selectEvent, handleEditEvent, handleRemoveEvent, onEventUpdated, navigateTo, isActive };
   },
 };
 </script>
