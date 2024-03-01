@@ -9,6 +9,18 @@
     </section>
 
     <button @click="logout" class="logout-button">Logout</button>
+
+    <!-- Footer navigation similar to EventList -->
+    <footer>
+      <div class="footer-icon" @click="navigateTo('AdminDashboard')">
+        <i class="fas fa-home"></i>
+        <span v-if="isActive('AdminDashboard')">•</span>
+      </div>
+      <div class="footer-icon" @click="navigateTo('AdminEventList')">
+        <i class="fas fa-ticket-alt"></i>
+        <span v-if="isActive('AdminEventList')">•</span>
+      </div>
+    </footer>
 </div>
 </template>
 
@@ -17,6 +29,8 @@ import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import AddEventForm from '@/components/admin/AddEventForm.vue';
 
+import '@fortawesome/fontawesome-free/css/all.css';
+
 const store = useStore();
 const router = useRouter();
 
@@ -24,9 +38,19 @@ const logout = async () => {
   await store.dispatch('logout');
   router.push('/');
 };
+
+// Navigation and Active State Logic
+const navigateTo = (name) => {
+  router.push({ name });
+};
+
+const isActive = (name) => {
+  return router.currentRoute.value.name === name;
+};
 </script>
 
 <style scoped>
+@import 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css';
 .admin-dashboard {
   max-width: 800px;
   margin: auto;
@@ -63,5 +87,24 @@ const logout = async () => {
   background-color: #c9302c;
 }
 
-/* Additional styling for form inputs and buttons inside AddEventForm can be added here */
+footer {
+  display: flex;
+  justify-content: space-around;
+  padding: 20px;
+  background-color: #f9f9f9; /* Adjust according to your theme */
+}
+
+.footer-icon {
+  text-align: center;
+  cursor: pointer;
+}
+
+.footer-icon i {
+  font-size: 24px; /* Adjust size as needed */
+}
+
+.footer-icon span {
+  display: block;
+  color: #4caf50; /* Active icon indicator */
+}
 </style>

@@ -138,6 +138,7 @@ export default {
 </script>
 
 <style scoped>
+@import 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css';
 .event-list-container {
   color: #fff;
   background-color: #121212; /* darkish-bluish background */
