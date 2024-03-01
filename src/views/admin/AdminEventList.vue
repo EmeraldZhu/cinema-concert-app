@@ -72,6 +72,17 @@ export default {
       showModal.value = true;
     };
 
+    const editEvent = (event) => {
+      // Logic to handle event editing goes here
+      // This will typically involve setting a state to show the EditEventForm modal
+    };
+
+    const removeEvent = async (eventId) => {
+      // Logic to handle event removal goes here
+      // This will typically involve calling a Firestore function to delete the event
+      // Then you would fetch the events list again to update the UI
+    };
+
     const navigateTo = (name) => {
       router.push({ name });
     };
