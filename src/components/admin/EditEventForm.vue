@@ -73,6 +73,20 @@ h2, label {
   font-weight: 500;
 }
 
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+}
+
+.form-group textarea {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+}
+
 .modal {
     display: block; /* Hidden by default */
     position: fixed; /* Stay in place */
