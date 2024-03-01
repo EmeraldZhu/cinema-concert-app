@@ -43,7 +43,7 @@ import EventDetailsModal from '@/components/admin/EventDetailsModal.vue';
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { db } from '@/firebase';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
 
 import '@fortawesome/fontawesome-free/css/all.css';
 
@@ -78,9 +78,22 @@ export default {
     };
 
     const removeEvent = async (eventId) => {
-      // Logic to handle event removal goes here
-      // This will typically involve calling a Firestore function to delete the event
-      // Then you would fetch the events list again to update the UI
+      // Confirm before deleting
+      if (confirm(`Are you sure you want to delete the event: ${eventId}?`)) {
+        try {
+          // Delete the document
+          await deleteDoc(doc(db, 'events', eventId));
+          // Fetch and update the list
+          events.value = (await getDocs(collection(db, 'events'))).docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          }));
+          showModal.value = false;
+        } catch (error) {
+          console.error("Error removing event: ", error);
+          alert("Failed to delete the event. Please try again.");
+        }
+      }
     };
 
     const navigateTo = (name) => {
@@ -91,7 +104,7 @@ export default {
       return route.name === name;
     };
 
-    return { events,  selectedEvent, showModal, selectEvent, navigateTo, isActive };
+    return { events,  selectedEvent, showModal, selectEvent, removeEvent, navigateTo, isActive };
   },
 };
 </script>
