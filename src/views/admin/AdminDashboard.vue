@@ -4,7 +4,7 @@
 
     <!-- Form Section -->
     <section class="form-section">
-        <h2>Add New Event</h2>
+        <!-- <h2>Add New Event</h2> -->
         <AddEventForm />
     </section>
 
