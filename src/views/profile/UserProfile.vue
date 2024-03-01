@@ -19,21 +19,21 @@
         <button @click="deleteAccount" class="delete-account-btn">Delete Account</button>
       </form>
     </div>
-  </template>
+</template>
   
-  <script setup>
-  import { ref, onMounted } from 'vue';
-  import { useStore } from 'vuex';
-  import { useRouter } from 'vue-router';
+<script setup>
+import { ref, onMounted } from 'vue';
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
   
-  const store = useStore();
-  const router = useRouter();
+const store = useStore();
+const router = useRouter();
 
-  const displayName = ref('');
-  const email = ref('');
-  const role = ref(''); // Added role ref
+const displayName = ref('');
+const email = ref('');
+const role = ref(''); // Added role ref
   
-  // Populate fields with user data on component mount
+// Populate fields with user data on component mount
   onMounted(() => {
     const user = store.state.user;
     if (user) {
@@ -66,7 +66,7 @@
     }
   }
 };
-  </script>
+</script>
   
 <style>
 .profile-container {
