@@ -44,7 +44,7 @@ import 'vue3-carousel/dist/carousel.css';
 import { useRoute, useRouter } from 'vue-router';
 import { db } from '@/firebase';
 import { collection, getDocs } from 'firebase/firestore';
-import UserEventDetailModal from '@/components/UserEventDetailModal.vue';
+import UserEventDetailModal from '@/components/user/UserEventDetailModal.vue';
 
 import '@fortawesome/fontawesome-free/css/all.css';
 
