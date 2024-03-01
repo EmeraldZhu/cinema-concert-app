@@ -7,7 +7,7 @@
     
     <!-- Event Carousel -->
     <Carousel :snap-align="'center'" :items-to-show="1.2" :model-value="0">
-      <Slide v-for="event in events" :key="event.id" @click="selectEvent(event)">
+      <Slide v-for="event in events" :key="event.id" @click="showEventDetails(event)">
         <div class="event-card">
           <img :src="event.posterPath" alt="Event Poster" class="event-poster" />
           <h2>{{ event.title }}</h2>
@@ -15,10 +15,13 @@
       </Slide>
     </Carousel>
 
+    <!-- UserEventDetailModal component -->
     <UserEventDetailModal
-      v-if="isModalVisible"
+      v-if="selectedEvent"
       :event="selectedEvent"
+      :show="isModalVisible"
       @close="isModalVisible = false"
+      @reserve="reserveTicket"
     />
 
     <!-- Footer Navigation -->
@@ -64,6 +67,16 @@ onMounted(async () => {
     ...doc.data(),
   }));
 });
+
+const showEventDetails = (event) => {
+  selectedEvent.value = event;
+  isModalVisible.value = true;
+};
+
+const reserveTicket = (ticketDetails) => {
+  // TODO: Implement reservation logic
+  console.log('Reserving ticket:', ticketDetails);
+};
 
 const selectEvent = (event) => {
   selectedEvent.value = event;

@@ -27,7 +27,11 @@
       },
       reserveTicket(type) {
         this.$emit('reserve', { eventId: this.event.id, ticketType: type });
-      }
+      },
+      cancelReservation() {
+        // TODO: Implement cancellation logic
+        console.log('Cancelling reservation for event:', this.event.id);
+    }
     }
   };
   </script>
