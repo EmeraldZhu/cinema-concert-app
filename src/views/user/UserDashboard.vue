@@ -7,13 +7,19 @@
     
     <!-- Event Carousel -->
     <Carousel :snap-align="'center'" :items-to-show="1.2" :model-value="0">
-      <Slide v-for="event in events" :key="event.id">
+      <Slide v-for="event in events" :key="event.id" @click="selectEvent(event)">
         <div class="event-card">
           <img :src="event.posterPath" alt="Event Poster" class="event-poster" />
           <h2>{{ event.title }}</h2>
         </div>
       </Slide>
     </Carousel>
+
+    <UserEventDetailModal
+      v-if="isModalVisible"
+      :event="selectedEvent"
+      @close="isModalVisible = false"
+    />
 
     <!-- Footer Navigation -->
     <footer>
@@ -38,11 +44,14 @@ import 'vue3-carousel/dist/carousel.css';
 import { useRoute, useRouter } from 'vue-router';
 import { db } from '@/firebase';
 import { collection, getDocs } from 'firebase/firestore';
+import UserEventDetailModal from '@/components/UserEventDetailModal.vue';
 
 import '@fortawesome/fontawesome-free/css/all.css';
 
 const store = useStore();
 const events = ref([]);
+const selectedEvent = ref(null);
+const isModalVisible = ref(false);
 const route = useRoute();
 const router = useRouter();
 
@@ -55,6 +64,11 @@ onMounted(async () => {
     ...doc.data(),
   }));
 });
+
+const selectEvent = (event) => {
+  selectedEvent.value = event;
+  isModalVisible.value = true;
+};
 
 const navigateTo = (name) => {
   router.push({ name });
