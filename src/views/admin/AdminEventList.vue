@@ -13,6 +13,17 @@
         <h2>{{ event.title }}</h2>
       </div>
     </div>
+
+    <!-- EventDetailsModal integration -->
+    <EventDetailsModal
+      v-if="selectedEvent"
+      :event="selectedEvent"
+      :show="showModal"
+      @close="showModal = false"
+      @edit="editEvent"
+      @remove="removeEvent"
+    />
+
     <footer>
       <div class="footer-icon" @click="navigateTo('AdminDashboard')">
         <i class="fas fa-home"></i>
@@ -27,6 +38,8 @@
 </template>
 
 <script>
+import EventDetailsModal from '@/components/admin/EventDetailsModal.vue';
+
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { db } from '@/firebase';
@@ -35,8 +48,13 @@ import { collection, getDocs } from 'firebase/firestore';
 import '@fortawesome/fontawesome-free/css/all.css';
 
 export default {
+  components: {
+    EventDetailsModal
+  },
   setup() {
     const events = ref([]);
+    const selectedEvent = ref(null);
+    const showModal = ref(false);
     const route = useRoute();
     const router = useRouter();
 
@@ -49,7 +67,9 @@ export default {
     });
 
     const selectEvent = (event) => {
-      // Logic to show EventDetailsModal - will be provided later
+      // Logic to show EventDetailsModal
+      selectedEvent.value = event;
+      showModal.value = true;
     };
 
     const navigateTo = (name) => {
@@ -60,7 +80,7 @@ export default {
       return route.name === name;
     };
 
-    return { events, selectEvent, navigateTo, isActive };
+    return { events,  selectedEvent, showModal, selectEvent, navigateTo, isActive };
   },
 };
 </script>

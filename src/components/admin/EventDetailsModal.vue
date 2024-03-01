@@ -6,9 +6,9 @@
       <h2>{{ event.title }}</h2>
       <div class="event-details">
         <p>Ticket Type: VIP</p>
-        <p>Price: ${{ event.vipTicketPrice }}</p>
+        <p>Price: KES {{ event.vipTicketPrice }}</p>
         <p>Ticket Type: Regular</p>
-        <p>Price: ${{ event.regularTicketPrice }}</p>
+        <p>Price: KES {{ event.regularTicketPrice }}</p>
         <p>Max Attendees: {{ event.maxAttendees }}</p>
       </div>
       <button class="edit-button" @click="editEvent">Edit Event</button>
