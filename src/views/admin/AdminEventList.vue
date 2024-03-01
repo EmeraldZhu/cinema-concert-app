@@ -1,217 +1,139 @@
 <template>
-    <div class="event-list-container">
-    <h1>Event List</h1>
-    <div class="event-list">
+  <div class="event-list-container">
+    <h1>My Events</h1>
+    <div class="events">
+      <!-- Events are rendered here -->
       <div 
-        class="event-card" 
         v-for="event in events" 
         :key="event.id" 
-        @click="showEventDetails(event)"
+        class="event-card" 
+        @click="selectEvent(event)"
       >
         <img :src="event.posterPath" alt="Event Poster" class="event-poster" />
-        <div class="event-info">
-          <h3>{{ event.title }}</h3>
-          <div class="event-rating">
-            <span>IMDB</span>
-            <strong>{{ event.imdbRating }}</strong>
-          </div>
-        </div>
+        <h2>{{ event.title }}</h2>
       </div>
     </div>
-  
-    <!-- Placeholder for the Event Details Modal -->
-    <!-- This is where you will integrate the UI you provide later -->
-    <EventDetailsModal v-if="selectedEvent" :event="selectedEvent" @close="selectedEvent = null" />
-
-    <!-- Footer Navigation -->
     <footer>
-      <nav class="footer-nav">
-        <div @click="navigateTo('AdminDashboard')" :class="{ active: isActive('AdminDashboard') }">
-          <i class="fas fa-home"></i>
-          <span>Home</span>
-          <div v-if="isActive('AdminDashboard')" class=""></div>
-        </div>
-        <div @click="navigateTo('AdminEventList')" :class="{ active: isActive('EventList') }">
-          <i class="fas fa-film"></i>
-          <span>Events</span>
-          <div v-if="isActive('AdminEventList')" class="dot"></div>
-        </div>
-      </nav>
+      <div class="footer-icon" @click="navigateTo('AdminDashboard')">
+        <i class="fas fa-home"></i>
+        <span v-if="isActive('AdminDashboard')">•</span>
+      </div>
+      <div class="footer-icon" @click="navigateTo('AdminEventList')">
+        <i class="fas fa-ticket-alt"></i>
+        <span v-if="isActive('AdminEventList')">•</span>
+      </div>
     </footer>
   </div>
 </template>
-  
+
 <script>
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { db } from '@/firebase';
 import { collection, getDocs } from 'firebase/firestore';
-import EventDetailsModal from '@/components/admin/EventDetailsModal.vue';
-// Assume you have a utility to fetch events and their IMDb ratings
-// import { getEventsWithRatings } from '@/api';
-  
+
+import '@fortawesome/fontawesome-free/css/all.css';
+
 export default {
-    components: {
-      EventDetailsModal,
-    },
-    setup() {
-      const events = ref([]);
-      const route = useRoute();
-      const router = useRouter();
-      const selectedEvent = ref(null);
-  
-      onMounted(async () => {
-        const querySnapshot = await getDocs(collection(db, 'events'));
-        events.value = querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-          // Mock IMDb rating - you might want to fetch this from TMDB API
-          imdbRating: 'N/A',
-        }));
-      });
+  setup() {
+    const events = ref([]);
+    const route = useRoute();
+    const router = useRouter();
 
-      onMounted(async () => {
-        events.value = await getEventsWithRatings();
-      });
-  
-      const showEventDetails = (event) => {
-        selectedEvent.value = event;
-      };
+    onMounted(async () => {
+      const querySnapshot = await getDocs(collection(db, 'events'));
+      events.value = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+    });
 
-      const navigateTo = (name) => {
-        router.push({ name });
-      };
+    const selectEvent = (event) => {
+      // Logic to show EventDetailsModal - will be provided later
+    };
 
-      const isActive = (name) => {
-        return route.name === name;
-      };
-  
-      return { events, selectedEvent, showEventDetails, navigateTo, isActive };
-    },
-}
+    const navigateTo = (name) => {
+      router.push({ name });
+    };
+
+    const isActive = (name) => {
+      return route.name === name;
+    };
+
+    return { events, selectEvent, navigateTo, isActive };
+  },
+};
 </script>
-  
-<style scoped>
+
+<style>
 .event-list-container {
-  max-width: 600px;
-  margin: auto;
-  font-family: 'Arial', sans-serif;
-  color: #ffffff;
-  background-color: #1a1a1a;
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+  color: #fff;
+  background-color: #121212; /* darkish-bluish background */
+  height: 100vh;
+  overflow-y: auto; /* For scrolling through event cards */
 }
 
 h1 {
   text-align: center;
-  padding: 20px 0;
-  margin: 0;
-  background-color: #262626;
-  color: #ffffff;
-  font-size: 24px;
+  padding: 1rem;
 }
 
-.event-list {
+.events {
   display: flex;
   flex-direction: column;
-  
+  align-items: center;
+  gap: 1rem;
+  padding-bottom: 5rem; /* Space for the footer */
 }
 
 .event-card {
-  display: flex;
-  align-items: center;
-  background: #262626;
-  margin-bottom: 2px; /* Creates the spacing between cards */
-  transition: background-color 0.3s;
+  width: 90%;
+  max-width: 340px;
+  background-color: #1a1a1a;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.3s ease;
 }
 
 .event-card:hover {
-  background: #333333;
+  transform: scale(1.03);
 }
 
 .event-poster {
-  width: 80px; /* Adjust as necessary */
-  height: 120px; /* Adjust as necessary */
+  width: 100%;
+  aspect-ratio: 2 / 3;
   object-fit: cover;
-  border-top-left-radius: 10px;
-  border-bottom-left-radius: 10px;
 }
 
-.event-info {
-  padding: 10px;
-  flex-grow: 1;
-}
-
-.event-info h3 {
-  margin: 0;
-  padding-bottom: 5px;
-  font-size: 18px; /* Adjust as necessary */
-}
-
-.event-rating {
-  display: flex;
-  align-items: center;
-  margin-top: 5px;
-  font-weight: bold;
-}
-
-.event-rating span {
-  background: #ffc107;
-  color: black;
-  padding: 2px 6px;
-  border-radius: 4px;
-}
-
-.event-rating strong {
-  margin-left: 5px;
-  color: #ffc107;
+h2 {
+  margin: 0.5rem;
+  font-size: 1.2rem;
 }
 
 footer {
-  background-color: #202020;
-  padding: 10px 0;
-}
-
-.footer-nav {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: #222;
   display: flex;
-  justify-content: space-around;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  position: relative;
+  justify-content: space-evenly;
+  padding: 1rem 0;
 }
 
-.footer-nav div {
+.footer-icon {
   text-align: center;
   cursor: pointer;
-  padding: 10px;
-  position: relative;
 }
 
-.footer-nav .active {
-  color: #ffc107;
+.footer-icon i {
+  font-size: 1.5rem;
 }
 
-.footer-nav .active::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 8px;
-  height: 8px;
-  background-color: #ffc107;
-  border-radius: 50%;
-  margin-bottom: -4px; /* Adjust this value to move the dot up or down */
-}
-
-.footer-nav i {
+.footer-icon span {
   display: block;
-  margin: 0 auto;
+  color: #4caf50; /* Active icon indicator */
 }
 
-.dot {
-  display: none; /* Hide the dot, as it is not present in the provided UI design */
-}
+/* Include FontAwesome CSS */
+@import 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css';
 </style>
