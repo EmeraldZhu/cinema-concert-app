@@ -46,7 +46,7 @@ import { Carousel, Slide } from 'vue3-carousel';
 import 'vue3-carousel/dist/carousel.css';
 import { useRoute, useRouter } from 'vue-router';
 import { db } from '@/firebase';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, updateDoc, doc, setDoc } from 'firebase/firestore';
 import UserEventDetailModal from '@/components/user/UserEventDetailModal.vue';
 
 import '@fortawesome/fontawesome-free/css/all.css';
@@ -73,9 +73,30 @@ const showEventDetails = (event) => {
   isModalVisible.value = true;
 };
 
-const reserveTicket = (ticketDetails) => {
-  // TODO: Implement reservation logic
-  console.log('Reserving ticket:', ticketDetails);
+const reserveTicket = async ({ eventId, ticketType }) => {
+  const eventRef = doc(db, 'events', eventId);
+
+  try {
+    const eventData = events.value.find(event => event.id === eventId);
+    const newReservations = eventData.reservations || { VIP: 0, Regular: 0 };
+
+    // Check if the user can reserve more tickets
+    if (newReservations[ticketType] < eventData.maxAttendees) {
+      // Increment the reservation count
+      newReservations[ticketType] += 1;
+
+      // Update or set the reservations field
+      await setDoc(eventRef, { reservations: newReservations }, { merge: true });
+
+      alert('Ticket reserved successfully!');
+    } else {
+      alert('No more tickets available.');
+    }
+  } catch (error) {
+    console.error('Failed to reserve ticket:', error);
+    alert('Failed to reserve ticket. Please try again.');
+  }
+  isModalVisible.value = false;
 };
 
 const selectEvent = (event) => {

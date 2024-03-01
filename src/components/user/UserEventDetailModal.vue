@@ -15,6 +15,39 @@
   </template>
   
   <script>
+  const cancelReservation = async () => {
+  // TODO: Implement cancellation logic
+  // This example decrements the number of reservations for the ticket type
+  const eventRef = doc(db, 'events', this.event.id);
+
+  try {
+    // Fetch the current event data
+    const eventData = this.event;
+
+    // Check if there are any tickets to cancel
+    if (eventData.reservations.VIP > 0 || eventData.reservations.Regular > 0) {
+      // Decrement the reservation count for a specific ticket type
+      const ticketType = 'VIP'; // or 'Regular', based on the user's choice
+
+      eventData.reservations[ticketType] -= 1;
+
+      // Update Firestore
+      await updateDoc(eventRef, {
+        [`reservations.${ticketType}`]: eventData.reservations[ticketType]
+      });
+
+      alert('Ticket reservation cancelled successfully!');
+    } else {
+      alert('You do not have any reservations to cancel.');
+    }
+  } catch (error) {
+    console.error('Failed to cancel reservation:', error);
+    alert('Failed to cancel reservation. Please try again.');
+  }
+
+  // Close the modal
+  this.$emit('close');
+};
   export default {
     props: {
       event: Object,
