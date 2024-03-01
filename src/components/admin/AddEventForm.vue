@@ -91,7 +91,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 /* Basic styling; adjust as needed */
 .event-form {
   max-width: 500px;

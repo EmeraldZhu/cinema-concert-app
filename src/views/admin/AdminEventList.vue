@@ -137,7 +137,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .event-list-container {
   color: #fff;
   background-color: #121212; /* darkish-bluish background */
