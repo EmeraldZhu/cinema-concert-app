@@ -214,7 +214,4 @@ footer {
 .dot {
   display: none; /* Hide the dot, as it is not present in the provided UI design */
 }
-
-/* Add FontAwesome CSS if not already included in your project */
-@import 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css';
 </style>
